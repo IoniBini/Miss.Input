@@ -11,7 +11,6 @@ public class CharacterMovement : MonoBehaviour
 
     protected Animator characterAnimator;
     public float jumpTimerReset = 0.5f;
-    private bool isResettingJump = true;
 
     public float jumpStrenght = 5f;
 
