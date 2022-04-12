@@ -10,6 +10,8 @@ public class CharacterMovement : MonoBehaviour
     public Vector3 movement;
 
     protected Animator characterAnimator;
+    public float jumpTimerReset = 0.5f;
+    private bool isResettingJump = true;
 
     public float jumpStrenght = 5f;
 
@@ -26,27 +28,60 @@ public class CharacterMovement : MonoBehaviour
         //movement input
         movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);//Input.GetAxis("Vertical")
 
-        //trigger movement animation
+        //making it so that the animator bool is always the same as the code bool for being grounded
+        if (floorCheckerBox.isGrounded == true)
+        {
+            characterAnimator.SetBool("isGrounded", true);
+            characterAnimator.SetBool("isFallingIdleLeft", false);
+            characterAnimator.SetBool("isFallingIdleRight", false);
+        }
+        else
+        {
+            characterAnimator.SetBool("isGrounded", false);
+            characterAnimator.SetBool("isFallingIdleRight", true);
+            characterAnimator.SetBool("isFallingIdleLeft", true);
+        }
+
+        //trigger movement animation right 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            characterAnimator.SetBool("isRunning", true);
+            characterAnimator.SetBool("isRunningRight", true);
         }
         else if (!Input.GetKey(KeyCode.D) || !Input.GetKey(KeyCode.RightArrow))
         {
-            characterAnimator.SetBool("isRunning", false);
+            characterAnimator.SetBool("isRunningRight", false);
+        }
+        //trigger movement animation left
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            characterAnimator.SetBool("isRunningLeft", true);
+        }
+        else if (!Input.GetKey(KeyCode.A) || !Input.GetKey(KeyCode.LeftArrow))
+        {
+            characterAnimator.SetBool("isRunningLeft", false);
         }
 
-        //clamping axis rotation
-        playerController.constraints = RigidbodyConstraints.FreezeRotation;
+
 
         //activate jump
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (floorCheckerBox.isGrounded == true)
             {
+                characterAnimator.SetBool("isJumping", true);
                 jump();
+                StartCoroutine(jumpReset());
             }
         }
+    }
+
+    IEnumerator jumpReset()
+    {
+        //the character needs at least one frame to get off the floor for the animation to commence, hence I'm making it wait before resetting the jump bool to false 
+        yield return new WaitForSeconds(jumpTimerReset);
+        characterAnimator.SetBool("isJumping", false);
+        characterAnimator.SetBool("isFallingIdleRight", true);
+        characterAnimator.SetBool("isFallingIdleLeft", true);
     }
 
     void jump()
