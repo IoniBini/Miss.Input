@@ -587,14 +587,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417607802}
-  m_LocalRotation: {x: 0.32799265, y: 0.80404663, z: 0.47811937, w: 0.13165012}
-  m_LocalPosition: {x: 0.10841285, y: 0.50807625, z: -0.15380824}
+  m_LocalRotation: {x: 0.1425252, y: 0.8686476, z: 0.43425393, w: 0.19121085}
+  m_LocalPosition: {x: 0.108567595, y: 0.50924796, z: -0.1538608}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1858099451}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: -43.039, y: 134.046, z: 63.366}
+  m_LocalEulerAnglesHint: {x: -44.421, y: 140.326, z: 35.394}
 --- !u!1 &467172807
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,7 +986,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.8794643, y: 1}
+    m_SensorSize: {x: 2.2429907, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1308,12 +1308,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   movement: {x: 0, y: 0, z: 0}
+  slowMoveWhileAttacking: 1
+  resetToIdle: 0.1
+  isAttacking: 0
   jumpTimerReset: 0.2
+  jumpStrenght: 300
   coyoteTime: 0.2
   coyoteTimeCounter: 0
   bufferTime: 0.2
   bufferTimeCounter: 0
-  jumpStrenght: 300
 --- !u!136 &1611392630
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3224,8 +3227,8 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 629eabbe7e05174429a4b25d214b5014, type: 3}
   m_Controller: {fileID: 9100000, guid: 2a23729aeef845c4bb2c1ed6b3057a24, type: 2}
-  m_CullingMode: 2
-  m_UpdateMode: 1
+  m_CullingMode: 1
+  m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
