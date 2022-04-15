@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkeletonMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: 24fecdae5701a5944a9f0099e7c96e79,
+  m_Name: SkeletonMaterialDamaged
+  m_Shader: {fileID: -6465566751694194690, guid: 239db7feaab828b49895c1f0b8d1241a,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
