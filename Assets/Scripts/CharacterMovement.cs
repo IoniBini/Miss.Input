@@ -262,7 +262,7 @@ public class CharacterMovement : MonoBehaviour
             //slow player movement down gradually while in attack, and also slowly but a little faster build it back up when you stop attacking
             if (isAttacking == true && slowMoveWhileAttacking >= 0.01f)
             {
-                slowMoveWhileAttacking -= Time.deltaTime * 1.5f;
+                slowMoveWhileAttacking -= Time.deltaTime * 3f;
             }
             //also checks to see if you are not defending before returning movement speed to normal
             else if (slowMoveWhileAttacking <= 1 && !Input.GetKey(KeyCode.J))

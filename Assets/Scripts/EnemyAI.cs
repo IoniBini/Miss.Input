@@ -22,10 +22,17 @@ public class EnemyAI : MonoBehaviour
     private Rigidbody enemyController;
     public float orientation = 1;
 
+    //fight mode variables
+    public bool playerDectected = false;
+    public bool isFacingRight = true;
+    public float combatMovementSpeed = 4.5f;
+    private Animator enemyAnimator;
+
     private void Start()
     {
         //floorDetection = this.gameObject.transform.GetChild(0).GetComponent<>
         enemyController = GetComponent<Rigidbody>();
+        enemyAnimator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -46,7 +53,72 @@ public class EnemyAI : MonoBehaviour
 
     void moveEnemy(Vector3 direction)
     {
-        enemyController.MovePosition(transform.position + (direction * enemySpeed * Time.deltaTime));
+        switch (playerDectected)
+        {
+            //if the player isn't near, then the enemy simply strolls around from right to left
+            case false: enemyController.MovePosition(transform.position + (direction * enemySpeed * Time.deltaTime));
+
+                break;
+
+            //if the player is found, the enemy will attampt to close into the player
+            case true:
+
+                //flips the enemy towards the player always
+                if (transform.position.x > GameObject.Find("xbot").transform.position.x && isFacingRight == true)
+                {
+                    Flip();
+                }
+
+                if (transform.position.x < GameObject.Find("xbot").transform.position.x && isFacingRight == false)
+                {
+                    Flip();
+                }
+
+                //if the enemy is facing the player and is up close, then it slows down its movement
+                if (transform.position.x < GameObject.Find("xbot").transform.position.x && isFacingRight == true)
+                {
+                    //these debugs demonstrate how the math is done if need be
+                    Debug.Log(GameObject.Find("xbot").transform.position.x);
+                    Debug.Log(transform.position.x);
+
+                    if (Mathf.Abs(GameObject.Find("xbot").transform.position.x - Mathf.Abs(transform.position.x)) <= 1.5f)
+                    {
+                        combatMovementSpeed = 0;
+
+                        enemyAnimator.SetBool("isAttacking", true);
+                    }
+                    else
+                    {
+                        combatMovementSpeed = 4.5f;
+                        enemyAnimator.SetBool("isAttacking", false);
+                    }
+
+                    enemyController.MovePosition(transform.position + (direction * enemySpeed * Time.deltaTime * combatMovementSpeed));
+                }
+
+                else if (transform.position.x > GameObject.Find("xbot").transform.position.x && isFacingRight == false)
+                {
+                    /*Debug.Log(transform.position.x - GameObject.Find("xbot").transform.position.x);
+                    Debug.Log(Mathf.Abs(GameObject.Find("xbot").transform.position.x));
+                    Debug.Log(Mathf.Abs(transform.position.x));*/
+
+                    if (transform.position.x - GameObject.Find("xbot").transform.position.x <= 1.5f)
+                    {
+                        combatMovementSpeed = 0;
+
+                        enemyAnimator.SetBool("isAttacking", true);
+                    }
+                    else
+                    {
+                        combatMovementSpeed = 4.5f;
+                        enemyAnimator.SetBool("isAttacking", false);
+                    }
+
+                    enemyController.MovePosition(transform.position + (direction * enemySpeed * Time.deltaTime * combatMovementSpeed));
+                }
+
+                break;
+        }
     }
 
     IEnumerator Damage()
@@ -80,5 +152,14 @@ public class EnemyAI : MonoBehaviour
 
         GetComponent<Transform>().eulerAngles = new Vector3(0, currentRotation * -1, 0);
         orientation = orientation * -1;
+        
+        if (isFacingRight == true)
+        {
+            isFacingRight = false;
+        }
+        else
+        {
+            isFacingRight = true;
+        }
     }
 }
