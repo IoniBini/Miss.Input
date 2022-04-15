@@ -78,10 +78,12 @@ public class EnemyAI : MonoBehaviour
                 if (transform.position.x < GameObject.Find("xbot").transform.position.x && isFacingRight == true)
                 {
                     //these debugs demonstrate how the math is done if need be
-                    Debug.Log(GameObject.Find("xbot").transform.position.x);
-                    Debug.Log(transform.position.x);
+                    //Debug.Log(GameObject.Find("xbot").transform.position.x);
+                    //Debug.Log(transform.position.x);
 
-                    if (Mathf.Abs(GameObject.Find("xbot").transform.position.x - Mathf.Abs(transform.position.x)) <= 1.5f)
+                    //it's worth noting that the bellow if statement ONLY works if you are far away from the 0 x axis of the world, because there is a small region where the value will not be big enough
+                    //to cover the area needed to get to the player. this is because we are workign with absolute values.
+                    if (Mathf.Abs(Mathf.Abs(GameObject.Find("xbot").transform.position.x) - Mathf.Abs(transform.position.x)) <= 1.5f)
                     {
                         combatMovementSpeed = 0;
 
@@ -123,12 +125,31 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator Damage()
     {
+        //prevents the player from spamming and killing the enemy instantly
+        beingDamaged = true;
+
         //needs to immidetally become false again, otherwise the number goes does super fast
         enemyHealth--;
         isHit = false;
 
-        //prevents the player from spamming and killing the enemy instantly
-        beingDamaged = true;
+        //originally, I was going to make the enemy flicker red with shader graph when struck, but unity won't update the material in real time while in build mode, so I gave up, because it's 3am
+
+        //Material SkeletonMaterial = Resources.Load<Material>("Assets/Premade Assets/Kevin Iglesias/Skeleton Animations/Materials/SkeletonMaterialDamaged");
+        //Renderer thisRenderer = this.gameObject.transform.GetChild(0).GetComponent<Renderer>();
+        //thisRenderer.material = SkeletonMaterial;
+        //this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material = damagedShader;
+        //Resources.Load<Material>(GetComponent<Renderer>().material.name);
+        //this.gameObject.transform.GetChild(0).GetComponent<Material>() = Resources.Load<Material>("Assets/Premade Assets/Kevin Iglesias/Skeleton Animations/Materials/SkeletonMaterialDamaged.mat");
+
+        Renderer rend = this.gameObject.transform.GetChild(0).GetComponent<Renderer>();
+        rend.material = new Material(skeletonBody);
+        this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
+
+        enemyAnimator.SetBool("isBeingHit", true);
+
+        yield return new WaitForSeconds(hitDelay);
+
+        this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.grey;
 
         //enemy self destructs when health is 0
         if (enemyHealth == 0)
@@ -136,14 +157,9 @@ public class EnemyAI : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        //briefly changes the material so it flashes, then returns it to normal
-        this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material = damagedShader;
-
-        yield return new WaitForSeconds(hitDelay);
+        enemyAnimator.SetBool("isBeingHit", false);
 
         beingDamaged = false;
-
-        this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material = regularShader;
     }
 
     public void Flip()

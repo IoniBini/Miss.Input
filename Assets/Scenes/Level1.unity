@@ -1300,7 +1300,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 2.0427237, y: 1}
+    m_SensorSize: {x: 2.048064, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1409,7 +1409,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 8873ce4ec83fa63418574bdb05affbdd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1631,6 +1631,7 @@ MonoBehaviour:
   coyoteTimeCounter: 0
   bufferTime: 0.2
   bufferTimeCounter: 0
+  healthPoints: 3
 --- !u!136 &1611392630
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3585,6 +3586,8 @@ GameObject:
   - component: {fileID: 3288468337895523321}
   - component: {fileID: 1877199582131047516}
   - component: {fileID: 4461325995474827414}
+  - component: {fileID: 4461325995474827416}
+  - component: {fileID: 4461325995474827415}
   m_Layer: 0
   m_Name: SkeletonSword
   m_TagString: Untagged
@@ -4692,6 +4695,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4461325995474827415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2803820806844553539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af0a2798e8eaddb499e1ef02d729fb4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &4461325995474827416
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2803820806844553539}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.24668528, y: 1.2226397, z: 0.06769172}
+  m_Center: {x: 0.0000003218381, y: 0.48690912, z: -0.00000043404765}
 --- !u!23 &4461325997155182004
 MeshRenderer:
   m_ObjectHideFlags: 0

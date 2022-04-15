@@ -31,6 +31,9 @@ public class CharacterMovement : MonoBehaviour
     public float bufferTime = 0.2f;
     public float bufferTimeCounter;
 
+    //health variables
+    public int healthPoints = 3;
+
     private void Awake()
     {
         //allocating the correct rigidbodies 
@@ -278,5 +281,10 @@ public class CharacterMovement : MonoBehaviour
 
             playerController.MovePosition(transform.position + (direction * speed * Time.deltaTime * slowMoveWhileAttacking));
         }
+    }
+
+    public void beingDamaged()
+    {
+        healthPoints--;
     }
 }
