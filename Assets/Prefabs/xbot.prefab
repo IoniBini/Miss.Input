@@ -1563,6 +1563,8 @@ MonoBehaviour:
   speed: 8
   movement: {x: 0, y: 0, z: 0}
   slowMoveWhileAttacking: 1
+  isWalkingBothWays: 0
+  horizontalValue: 0
   resetToIdle: 0.1
   isAttacking: 0
   jumpTimerReset: 0.2
@@ -1571,10 +1573,17 @@ MonoBehaviour:
   coyoteTimeCounter: 0
   bufferTime: 0.2
   bufferTimeCounter: 0
-  healthPoints: 3
+  jumpExtraFrame: 0
+  healthPoints: 6
   isDead: 0
   preventDamage: 0
   isDefending: 0
+  keyArray: 1a0100001b0100001c0100001d0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e0100001e010000
+  attackKeyInt: 0
+  defendKeyInt: 0
+  jumpKeyInt: 0
+  leftKeyInt: 0
+  rightKeyInt: 0
 --- !u!114 &6375126440940089440
 MonoBehaviour:
   m_ObjectHideFlags: 0

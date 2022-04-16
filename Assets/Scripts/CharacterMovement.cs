@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class CharacterMovement : MonoBehaviour
     public float speed = 10f;
     public Vector3 movement;
     public float slowMoveWhileAttacking = 1f;
+    public bool isWalkingBothWays = false;
+    public int horizontalValue = 0;
 
     //animation variables
     protected Animator characterAnimator;
@@ -30,12 +33,36 @@ public class CharacterMovement : MonoBehaviour
     public float coyoteTimeCounter;
     public float bufferTime = 0.2f;
     public float bufferTimeCounter;
+    public bool jumpExtraFrame = false;
 
     //health + defence variables
     public int healthPoints = 3;
     public bool isDead = false;
     public bool preventDamage = false;
     public bool isDefending = false;
+
+    //key randomiser variables
+    public KeyCode[] keyArray;
+
+    [SerializeField]
+    private int attackKeyInt;
+    private TextMeshProUGUI attackKeyDisplay;
+
+    [SerializeField]
+    private int defendKeyInt;
+    private TextMeshProUGUI defendDisplay;
+
+    [SerializeField]
+    private int jumpKeyInt;
+    private TextMeshProUGUI jumpDisplay;
+
+    [SerializeField]
+    private int leftKeyInt;
+    private TextMeshProUGUI leftKeyDisplay;
+
+    [SerializeField]
+    private int rightKeyInt;
+    private TextMeshProUGUI rightKeyDisplay;
 
     private void Awake()
     {
@@ -44,15 +71,74 @@ public class CharacterMovement : MonoBehaviour
         characterAnimator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        //upon starting, all the keys for controlling the character are randomly picked from the array
+
+        //attack
+        attackKeyInt = Random.Range(0, keyArray.Length);
+        attackKeyDisplay = GameObject.Find("AttackButton").GetComponent<TextMeshProUGUI>();
+        attackKeyDisplay.text = "Attack: " + keyArray[attackKeyInt].ToString();
+
+        //defend
+        defendKeyInt = Random.Range(0, keyArray.Length);
+        //prevents a two inputs to be bound to the same key
+        do{defendKeyInt = Random.Range(0, keyArray.Length);}
+        while (defendKeyInt == attackKeyInt);
+        defendDisplay = GameObject.Find("DefendButton").GetComponent<TextMeshProUGUI>();
+        defendDisplay.text = "Defend: " + keyArray[defendKeyInt].ToString();
+
+        //jump
+        jumpKeyInt = Random.Range(0, keyArray.Length);
+        //prevents a two inputs to be bound to the same key
+        do { jumpKeyInt = Random.Range(0, keyArray.Length); }
+        while (jumpKeyInt == attackKeyInt || jumpKeyInt == defendKeyInt);
+        jumpDisplay = GameObject.Find("JumpButton").GetComponent<TextMeshProUGUI>();
+        jumpDisplay.text = "Jump: " + keyArray[jumpKeyInt].ToString();
+
+        //right
+        rightKeyInt = Random.Range(0, keyArray.Length);
+        //prevents a two inputs to be bound to the same key
+        do { rightKeyInt = Random.Range(0, keyArray.Length); }
+        while (rightKeyInt == attackKeyInt || rightKeyInt == defendKeyInt || rightKeyInt == jumpKeyInt);
+        rightKeyDisplay = GameObject.Find("RightButton").GetComponent<TextMeshProUGUI>();
+        rightKeyDisplay.text = "Right: " + keyArray[rightKeyInt].ToString();
+
+        //left
+        leftKeyInt = Random.Range(0, keyArray.Length);
+        //prevents a two inputs to be bound to the same key
+        do { leftKeyInt = Random.Range(0, keyArray.Length); }
+        while (leftKeyInt == attackKeyInt || leftKeyInt == defendKeyInt || leftKeyInt == jumpKeyInt || leftKeyInt == rightKeyInt);
+        leftKeyDisplay = GameObject.Find("LeftButton").GetComponent<TextMeshProUGUI>();
+        leftKeyDisplay.text = "Left: " + keyArray[leftKeyInt].ToString();
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        /*if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }*/
+
+        if (Input.GetKey(keyArray[rightKeyInt]))
+        {
+            horizontalValue = 1;
+        }
+        else if (Input.GetKey(keyArray[leftKeyInt]))
+        {
+            horizontalValue = -1;
+        }
+        else if (Input.GetKey(keyArray[leftKeyInt]) && Input.GetKey(keyArray[rightKeyInt]))
+        {
+            horizontalValue = 0;
+        }
+        else
+        {
+            horizontalValue = 0;
         }
 
         //movement input
-        movement = new Vector3(Input.GetAxis("Horizontal"), 0f, 0f);//Input.GetAxis("Vertical")
+        movement = new Vector3(horizontalValue, 0f, 0f);
 
         //any time you leave the floor, you have a grace period of 0.2 seconds to jump. This resets any time you reach the floor again.
         if (floorCheckerBox.isGrounded == true)
@@ -65,7 +151,7 @@ public class CharacterMovement : MonoBehaviour
         }
 
         //any time you jump, you have a grace period of 0.2 seconds before hitting the floor where if you press jump, it'll work regardless of not yet being grounded
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(keyArray[jumpKeyInt]))
         {
             bufferTimeCounter = bufferTime;
         }
@@ -77,13 +163,20 @@ public class CharacterMovement : MonoBehaviour
 
         //freezes the character in place if no input is being received, so that it doesn't slide down sloped surfaces.
         //I do want to say I have found a specific instance where if the player tries to walk both ways at once on a sloped surface, they will fall as they are no longer kinematic. I didn't have time to fix it though...
-        if (floorCheckerBox.isGrounded == true && Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+        if (floorCheckerBox.isGrounded == true && isWalkingBothWays == false && Input.GetKeyDown(keyArray[jumpKeyInt]) == false)
         {
-            GetComponent<Rigidbody>().isKinematic = true;
+            if (jumpExtraFrame == true)
+            {
+                GetComponent<Rigidbody>().drag = 0;
+            }
+            else
+            {
+                GetComponent<Rigidbody>().drag = 30;
+            }
         }
-        else
+        else if (floorCheckerBox.isGrounded == false)
         {
-            GetComponent<Rigidbody>().isKinematic = false;
+            GetComponent<Rigidbody>().drag = 0;
         }
 
         //making it so that the animator bool is always the same as the code bool for being grounded
@@ -108,12 +201,7 @@ public class CharacterMovement : MonoBehaviour
         }
 
         //it checks to make sure the player can't walk both ways at the same time, making the animation loop between left and right endlessly
-        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
-        {
-            characterAnimator.SetBool("isRunningRight", false);
-            characterAnimator.SetBool("isRunningLeft", false);
-        }
-        else if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow))
+        if (isWalkingBothWays == true)
         {
             characterAnimator.SetBool("isRunningRight", false);
             characterAnimator.SetBool("isRunningLeft", false);
@@ -121,41 +209,27 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             //trigger movement animation right 
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetKey(keyArray[rightKeyInt]))
             {
                 characterAnimator.SetBool("isRunningRight", true);
             }
-            else if (!Input.GetKey(KeyCode.D) || !Input.GetKey(KeyCode.RightArrow))
+            else if (!Input.GetKey(keyArray[rightKeyInt]))
             {
                 characterAnimator.SetBool("isRunningRight", false);
             }
             //trigger movement animation left
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(keyArray[leftKeyInt]))
             {
                 characterAnimator.SetBool("isRunningLeft", true);
             }
-            else if (!Input.GetKey(KeyCode.A) || !Input.GetKey(KeyCode.LeftArrow))
+            else if (!Input.GetKey(keyArray[leftKeyInt]))
             {
                 characterAnimator.SetBool("isRunningLeft", false);
             }
         }
 
-        //activate jump
-        if (bufferTimeCounter > 0f)
-        {
-            if (coyoteTimeCounter > 0f && avoidJumpSpam == false)
-            {
-                //both coyote and buffer time counter needs to be set to 0 every time you jumpt to avoid spamming it
-                coyoteTimeCounter = 0f;
-                bufferTimeCounter = 0f;
-                characterAnimator.SetBool("isJumping", true);
-                playerController.AddForce(0f, jumpStrenght, 0f);
-                StartCoroutine(jumpReset());
-            }
-        }
-
-        //activate attack
-        if (Input.GetKeyDown(KeyCode.L))
+        //activate attack using the randomly picked key
+        if (Input.GetKeyDown(keyArray[attackKeyInt]))
         {
             isAttacking = true;
 
@@ -202,7 +276,7 @@ public class CharacterMovement : MonoBehaviour
         }
 
         //activate shield, can't be activated midair
-        if (Input.GetKey(KeyCode.J) && floorCheckerBox.isGrounded == true)
+        if (Input.GetKey(keyArray[defendKeyInt]) && floorCheckerBox.isGrounded == true)
         {
             //originally, as you can see bellow, I intended to check if the player is facing the enemy with the shield in order to defend correctly. 
             //I abandonded the idea due to time constraint, because I realised it would take some time to figure out how to make this work with multiple instances of enemies.
@@ -236,7 +310,7 @@ public class CharacterMovement : MonoBehaviour
             else if (slowMoveWhileAttacking <= 0.01f)
             {
                 slowMoveWhileAttacking = 0;
-                GetComponent<Rigidbody>().isKinematic = true;
+                GetComponent<Rigidbody>().drag = 30;
             }
 
             isDefending = true;
@@ -252,6 +326,22 @@ public class CharacterMovement : MonoBehaviour
 
             isDefending = false;
             characterAnimator.SetBool("isDefending", false);
+        }
+
+        //activate jump
+        if (bufferTimeCounter > 0f)
+        {
+            if (coyoteTimeCounter > 0f && avoidJumpSpam == false)
+            {
+                //both coyote and buffer time counter needs to be set to 0 every time you jumpt to avoid spamming it
+                coyoteTimeCounter = 0f;
+                bufferTimeCounter = 0f;
+                characterAnimator.SetBool("isJumping", true);
+
+                StartCoroutine(Jump());
+
+                StartCoroutine(jumpReset());
+            }
         }
     }
 
@@ -286,16 +376,14 @@ public class CharacterMovement : MonoBehaviour
     void moveCharacter(Vector3 direction)
     {
         //movement horizontal + it checks to make sure the player can't walk both ways at the same time
-        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
+        if (Input.GetKey(keyArray[rightKeyInt]) && Input.GetKey(keyArray[leftKeyInt]))
         {
-
-        }
-        else if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow))
-        {
-
+            isWalkingBothWays = true;
         }
         else
         {
+            isWalkingBothWays = false;
+
             //slow player movement down gradually while in attack, and also slowly but a little faster build it back up when you stop attacking
             if (isAttacking == true && slowMoveWhileAttacking >= 0.01f)
             {
@@ -310,7 +398,7 @@ public class CharacterMovement : MonoBehaviour
             //once you reach the slowest speed possible, you freeze altogether, so that you don't slide down slopes when attacking
             if (isAttacking == true && slowMoveWhileAttacking <= 0.01f)
             {
-                GetComponent<Rigidbody>().isKinematic = true;
+                GetComponent<Rigidbody>().drag = 30;
             }
 
             if (isDead == false)
@@ -346,6 +434,14 @@ public class CharacterMovement : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 break;
         }    
+    }
+
+    IEnumerator Jump()
+    {
+        jumpExtraFrame = true;
+        playerController.AddForce(0f, jumpStrenght, 0f);
+        yield return new WaitForSeconds(0.1f);
+        jumpExtraFrame = false;
     }
 
     private void OnCollisionEnter(Collision collision)

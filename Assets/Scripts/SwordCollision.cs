@@ -19,6 +19,7 @@ public class SwordCollision : MonoBehaviour
         if (other.tag == "Enemy" && characterMovementScript.isAttacking == true)
         {
             //once the sword collides with the enemy, the sword finds the script containing that enemy's AI and tells it that it has been struck
+            
             enemyAIScript = other.gameObject.GetComponent<EnemyAI>();
             enemyAIScript.isHit = true;
         }
