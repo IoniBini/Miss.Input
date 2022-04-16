@@ -145,7 +145,15 @@ public class EnemyAI : MonoBehaviour
         rend.material = new Material(skeletonBody);
         this.gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
 
-        enemyAnimator.SetBool("isBeingHit", true);
+        //if the enemy still has health, damage animation, else, death animation
+        if (enemyHealth > 0)
+        {
+            enemyAnimator.SetBool("isBeingHit", true);
+        }
+        else
+        {
+            enemyAnimator.SetBool("isDead", true);
+        }
 
         yield return new WaitForSeconds(hitDelay);
 

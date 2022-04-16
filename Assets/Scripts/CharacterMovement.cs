@@ -33,6 +33,7 @@ public class CharacterMovement : MonoBehaviour
 
     //health variables
     public int healthPoints = 3;
+    public bool isDead = false;
 
     private void Awake()
     {
@@ -279,12 +280,49 @@ public class CharacterMovement : MonoBehaviour
                 GetComponent<Rigidbody>().isKinematic = true;
             }
 
-            playerController.MovePosition(transform.position + (direction * speed * Time.deltaTime * slowMoveWhileAttacking));
+            if (isDead == false)
+            {
+                playerController.MovePosition(transform.position + (direction * speed * Time.deltaTime * slowMoveWhileAttacking));
+            }
         }
     }
 
-    public void beingDamaged()
+    public IEnumerator beingDamaged()
     {
         healthPoints--;
+        characterAnimator.SetBool("isBeingHit", true);
+
+        if (healthPoints <= 0)
+        {
+            //the bool prevents the player from moving when dead and plays the death animation if your health is 0 or less
+            isDead = true;
+        }
+
+        switch (isDead)
+        {
+            case false:
+
+                yield return new WaitForSeconds(0.3f);
+                characterAnimator.SetBool("isBeingHit", false);
+                break;
+
+            case true:
+
+                characterAnimator.SetBool("isDead", true);
+                yield return new WaitForSeconds(0.8f);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                break;
+        }    
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //ignore collision between the player and the enemies, so you can walk through them. 
+        //this code should be in the player as opposed to the enemy, since there are multiple instances of the skeleton whereas the player only one
+
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Physics.IgnoreCollision(collision.collider, GetComponent<CapsuleCollider>());
+        }
     }
 }
