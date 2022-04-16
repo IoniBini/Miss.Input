@@ -40,6 +40,7 @@ public class CharacterMovement : MonoBehaviour
     public bool isDead = false;
     public bool preventDamage = false;
     public bool isDefending = false;
+    public GameObject healthIndicator;
 
     //key randomiser variables
     public KeyCode[] keyArray;
@@ -69,6 +70,7 @@ public class CharacterMovement : MonoBehaviour
         playerController = GetComponent<Rigidbody>();
         floorCheckerBox = GameObject.Find("FloorCollisionCheck").GetComponent<FloorChecker>();
         characterAnimator = GetComponent<Animator>();
+        healthIndicator = GameObject.Find("HealthIndicator");
     }
 
     private void Start()
@@ -119,6 +121,8 @@ public class CharacterMovement : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }*/
+
+        healthIndicator.GetComponent<TextMeshProUGUI>().text = "Health: " + healthPoints;
 
         if (Input.GetKey(keyArray[rightKeyInt]))
         {
