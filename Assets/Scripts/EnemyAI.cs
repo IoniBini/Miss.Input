@@ -27,10 +27,13 @@ public class EnemyAI : MonoBehaviour
     public bool isFacingRight = true;
     public float combatMovementSpeed = 4.5f;
     private Animator enemyAnimator;
+    public CharacterMovement playerCharacterController;
+    public bool hitFrame = false;
 
     private void Start()
     {
         //floorDetection = this.gameObject.transform.GetChild(0).GetComponent<>
+        playerCharacterController = GameObject.Find("xbot").GetComponent<CharacterMovement>();
         enemyController = GetComponent<Rigidbody>();
         enemyAnimator = GetComponent<Animator>();
     }
@@ -184,6 +187,18 @@ public class EnemyAI : MonoBehaviour
         else
         {
             isFacingRight = true;
+        }
+    }
+
+    public void ShieldBeingHeld()
+    {
+        if (hitFrame == false)
+        {
+            hitFrame = true;
+        }
+        else
+        {
+            hitFrame = false;
         }
     }
 }

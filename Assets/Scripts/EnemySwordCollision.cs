@@ -6,32 +6,22 @@ public class EnemySwordCollision : MonoBehaviour
 {
     private CharacterMovement characterMovementScript;
     private Animator enemyAnimator;
-    private bool canBeHit = true;
+    public EnemyAI enemyAIScript;
 
     private void Awake()
     {
         characterMovementScript = GameObject.Find("xbot").GetComponent<CharacterMovement>();
         enemyAnimator = GetComponentInParent<Animator>();
+        enemyAIScript = GetComponentInParent<EnemyAI>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        //only triggers if enemy is attacking, and only if within the VERY GENEROUS time range I created on the enumerator on the bottom. The code also prevents damaging you when the enemy dies
-        if (other.tag == "Player" && enemyAnimator.GetBool("isAttacking") == true && canBeHit == true && enemyAnimator.GetBool("isDead") == false)
+        //only triggers if enemy is attacking, and only if within the time range I created events within the attack animation of the skeleton. The code also prevents damaging you when the enemy dies
+        if (other.tag == "Player" && enemyAnimator.GetBool("isAttacking") == true && enemyAIScript.hitFrame == true && enemyAnimator.GetBool("isDead") == false && characterMovementScript.preventDamage == false)
         {
             //once the sword collides with the enemy, the sword finds tells the player that it has been struck
             StartCoroutine(characterMovementScript.beingDamaged());
-
-            StartCoroutine(CanBeHitCoroutine());
         }
-    }
-
-    IEnumerator CanBeHitCoroutine()
-    {
-        canBeHit = false;
-
-        yield return new WaitForSeconds(1f);
-
-        canBeHit = true;
     }
 }

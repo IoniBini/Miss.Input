@@ -31,13 +31,14 @@ public class CharacterMovement : MonoBehaviour
     public float bufferTime = 0.2f;
     public float bufferTimeCounter;
 
-    //health variables
+    //health + defence variables
     public int healthPoints = 3;
     public bool isDead = false;
+    public bool preventDamage = false;
+    public bool isDefending = false;
 
     private void Awake()
     {
-        //allocating the correct rigidbodies 
         playerController = GetComponent<Rigidbody>();
         floorCheckerBox = GameObject.Find("FloorCollisionCheck").GetComponent<FloorChecker>();
         characterAnimator = GetComponent<Animator>();
@@ -196,6 +197,29 @@ public class CharacterMovement : MonoBehaviour
         //activate shield, can't be activated midair
         if (Input.GetKey(KeyCode.J) && floorCheckerBox.isGrounded == true)
         {
+            //originally, as you can see bellow, I intended to check if the player is facing the enemy with the shield in order to defend correctly. 
+            //I abandonded the idea due to time constraint, because I realised it would take some time to figure out how to make this work with multiple instances of enemies.
+
+            /*//it checks to see if the enemy is to your right or left, because the damage should ONLY be prevented if coming from the front, not the back
+            if (transform.position.x > GameObject.Find("xbot").transform.position.x && facingRightPlayer == true)
+            {
+                facingRightPlayer = false;
+            }
+            else
+            {
+                facingRightPlayer = true;
+            }
+
+            //then if it is facing the correct direction, it applies the damage prevention
+            if (isDefending == true)
+            {
+                preventDamage = true;
+            }
+            else if (isDefending == false)
+            {
+                preventDamage = false;
+            }*/
+
             //slow player movement down gradually while defending and moving
             if (slowMoveWhileAttacking >= 0.001f)
             {
@@ -208,6 +232,7 @@ public class CharacterMovement : MonoBehaviour
                 GetComponent<Rigidbody>().isKinematic = true;
             }
 
+            isDefending = true;
             characterAnimator.SetBool("isDefending", true);
         }
         else
@@ -218,6 +243,7 @@ public class CharacterMovement : MonoBehaviour
                 slowMoveWhileAttacking += Time.deltaTime;
             }
 
+            isDefending = false;
             characterAnimator.SetBool("isDefending", false);
         }
     }
