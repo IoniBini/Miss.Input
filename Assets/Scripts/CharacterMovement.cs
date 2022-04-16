@@ -34,6 +34,7 @@ public class CharacterMovement : MonoBehaviour
     public float bufferTime = 0.2f;
     public float bufferTimeCounter;
     public bool jumpExtraFrame = false;
+    private JumpBuildFix jumpFix;
 
     //health + defence variables
     public int healthPoints = 3;
@@ -71,6 +72,7 @@ public class CharacterMovement : MonoBehaviour
         floorCheckerBox = GameObject.Find("FloorCollisionCheck").GetComponent<FloorChecker>();
         characterAnimator = GetComponent<Animator>();
         healthIndicator = GameObject.Find("HealthIndicator");
+        jumpFix = GetComponent<JumpBuildFix>();
     }
 
     private void Start()
@@ -342,7 +344,7 @@ public class CharacterMovement : MonoBehaviour
                 bufferTimeCounter = 0f;
                 characterAnimator.SetBool("isJumping", true);
 
-                StartCoroutine(Jump());
+                StartCoroutine(jumpFix.Jump());
 
                 StartCoroutine(jumpReset());
             }
@@ -440,13 +442,13 @@ public class CharacterMovement : MonoBehaviour
         }    
     }
 
-    IEnumerator Jump()
+    /*IEnumerator Jump()
     {
         jumpExtraFrame = true;
         playerController.AddForce(0f, jumpStrenght, 0f);
         yield return new WaitForSeconds(0.1f);
         jumpExtraFrame = false;
-    }
+    }*/
 
     private void OnCollisionEnter(Collision collision)
     {
