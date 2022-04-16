@@ -89,12 +89,19 @@ public class CharacterMovement : MonoBehaviour
         //making it so that the animator bool is always the same as the code bool for being grounded
         if (floorCheckerBox.isGrounded == true)
         {
+            //the reason I was turning gravity on and off was because if you run into a wall non stop while on an angle, unity interprets this as freefall, making it so that it builds up heaps of momentum,
+            //consequentially, when you let go of the walk, you are pushed back with lots of force. Turning gravity off only helps but doesn't fully fix it, I'd need mroe time to reasearch a better solution
+            //especially because doing it this way also makes you able to walk up certain walls
+            //GetComponent<Rigidbody>().useGravity = false;
+
             characterAnimator.SetBool("isGrounded", true);
             characterAnimator.SetBool("isFallingIdleLeft", false);
             characterAnimator.SetBool("isFallingIdleRight", false);
         }
         else
         {
+            //GetComponent<Rigidbody>().useGravity = true;
+
             characterAnimator.SetBool("isGrounded", false);
             characterAnimator.SetBool("isFallingIdleRight", true);
             characterAnimator.SetBool("isFallingIdleLeft", true);
