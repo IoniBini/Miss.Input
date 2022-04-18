@@ -13,7 +13,7 @@ public class EnemyFloorDetection : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 6 && other.tag != "Player")
+        if (other.gameObject.layer == 6 && other.tag != "Player" && enemyAI.playerDectected == false)
         {
             enemyAI.Flip();
         }

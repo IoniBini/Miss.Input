@@ -169,18 +169,11 @@ public class CharacterMovement : MonoBehaviour
 
         //freezes the character in place if no input is being received, so that it doesn't slide down sloped surfaces.
         //I do want to say I have found a specific instance where if the player tries to walk both ways at once on a sloped surface, they will fall as they are no longer kinematic. I didn't have time to fix it though...
-        if (floorCheckerBox.isGrounded == true && isWalkingBothWays == false && Input.GetKeyDown(keyArray[jumpKeyInt]) == false)
+        if (floorCheckerBox.isGrounded == true && Input.GetKeyDown(keyArray[jumpKeyInt]) == false && jumpExtraFrame == false)
         {
-            if (jumpExtraFrame == true)
-            {
-                GetComponent<Rigidbody>().drag = 0;
-            }
-            else
-            {
-                GetComponent<Rigidbody>().drag = 30;
-            }
+            GetComponent<Rigidbody>().drag = 30;
         }
-        else if (floorCheckerBox.isGrounded == false)
+        else
         {
             GetComponent<Rigidbody>().drag = 0;
         }
